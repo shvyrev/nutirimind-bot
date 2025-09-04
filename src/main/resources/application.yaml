@@ -1,0 +1,20 @@
+# Database Configuration for Reactive PostgreSQL
+quarkus:
+  datasource:
+    db-kind: postgresql
+    username: nutrimind_user
+    password: nutrimind_password
+    reactive:
+      url: vertx-reactive:postgresql://localhost:5432/nutrimind
+    jdbc:
+      url: jdbc:postgresql://localhost:5432/nutrimind
+
+  # Hibernate Reactive Configuration
+  hibernate-orm:
+    database:
+      generation: none
+    sql-load-script: no-file
+
+  # Flyway for migrations (runs on startup, uses JDBC)
+  flyway:
+    migrate-at-start: true
