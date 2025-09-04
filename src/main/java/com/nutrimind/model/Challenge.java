@@ -3,11 +3,20 @@ package com.nutrimind.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.nutrimind.model.enums.ChallengeType;
+import com.nutrimind.model.enums.DifficultyLevel;
+
 import io.quarkus.hibernate.reactive.panache.PanacheEntity;
-import io.smallrye.mutiny.Uni;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+import io.smallrye.mutiny.Uni;
 
 @Entity
 @Table(name = "challenges")
@@ -19,29 +28,46 @@ public class Challenge extends PanacheEntity {
     @Column(name = "description")
     public String description;
 
-    @Column(name = "challenge_type")
-    public String challengeType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type")
+    public ChallengeType type;
 
-    @Column(name = "target_value")
-    public Integer targetValue;
+    @Column(name = "duration_days")
+    public Integer durationDays;
 
-    @Column(name = "reward_points")
-    public Integer rewardPoints;
+    @Column(name = "points_reward")
+    public Integer pointsReward;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "difficulty")
+    public DifficultyLevel difficulty;
+
+    @Column(name = "completion_criteria")
+    public String completionCriteria;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "challenge_tips", joinColumns = @JoinColumn(name = "challenge_id"))
+    @Column(name = "tip")
+    public List<String> tips;
 
     @Column(name = "created_at")
     public LocalDateTime createdAt;
 
     // Reactive finder methods
-    public static Uni<List<Challenge>> findByType(String challengeType) {
-        return find("challengeType", challengeType).list();
+    public static Uni<List<Challenge>> findByType(ChallengeType type) {
+        return find("type", type).list();
     }
 
     public static Uni<Challenge> findByTitle(String title) {
         return find("title", title).firstResult();
     }
 
+    public static Uni<List<Challenge>> findByDifficulty(DifficultyLevel difficulty) {
+        return find("difficulty", difficulty).list();
+    }
+
     // Reactive save method
     public Uni<Challenge> persistAndFlush() {
-        return super.persistAndFlush();
+        return persistAndFlush().onItem().transform(entity -> (Challenge) entity);
     }
 }
