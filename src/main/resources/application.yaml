@@ -1,20 +1,37 @@
-# Database Configuration for Reactive PostgreSQL
 quarkus:
+  http:
+    port: 8443
+    host: 0.0.0.0
+  telegram:
+    bot:
+      token: ${TELEGRAM_BOT_TOKEN:8267613015:AAGJ__sS6WndbBjjY2tWFey1kbpAId3IRjs}
+      username: ${TELEGRAM_BOT_USERNAME:FitnesNutriMindBot}
+  log:
+    level: INFO
+    category:
+      "com.nutrimind": DEBUG
+
+telegram:
+  webhook:
+    url: ${TELEGRAM_WEBHOOK_URL:https://5kpwvnvs-8443.euw.devtunnels.ms/}
+    enabled: ${TELEGRAM_WEBHOOK_ENABLED:true}
   datasource:
     db-kind: postgresql
-    username: nutrimind_user
-    password: nutrimind_password
-    reactive:
-      url: vertx-reactive:postgresql://localhost:5432/nutrimind
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
     jdbc:
       url: jdbc:postgresql://localhost:5432/nutrimind
+    reactive:
+      url: postgresql://localhost:5432/nutrimind
 
-  # Hibernate Reactive Configuration
+  # Hibernate Reactive Configuration - disable all schema operations
   hibernate-orm:
+    sql-load-script: no-file
     database:
       generation: none
-    sql-load-script: no-file
+    validate-in-dev-mode: false
 
-  # Flyway for migrations (runs on startup, uses JDBC)
+  # Flyway for migrations (disabled on startup - will run manually)
   flyway:
     migrate-at-start: true
+    locations: db/migration

@@ -2,7 +2,8 @@ package com.nutrimind.model.enums;
 
 public enum UserState {
     ONBOARDING,
-    ACTIVE, 
+    AWAITING_ANSWER,
+    ACTIVE,
     PAUSED,
     CHURNED
 }

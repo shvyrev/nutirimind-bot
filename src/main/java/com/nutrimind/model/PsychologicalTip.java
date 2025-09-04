@@ -11,9 +11,21 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 import io.smallrye.mutiny.Uni;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.experimental.Accessors;
 
 @Entity
 @Table(name = "psychological_tips")
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Accessors(chain = true)
 public class PsychologicalTip extends PanacheEntity {
 
     @Column(name = "title", nullable = false)

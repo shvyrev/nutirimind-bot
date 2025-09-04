@@ -8,9 +8,21 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import io.smallrye.mutiny.Uni;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.experimental.Accessors;
 
 @Entity
 @Table(name = "user_achievements")
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Accessors(chain = true)
 public class UserAchievement extends PanacheEntity {
 
     @ManyToOne

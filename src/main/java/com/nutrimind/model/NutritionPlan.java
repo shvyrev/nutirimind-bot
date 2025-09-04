@@ -18,9 +18,21 @@ import jakarta.persistence.MapKeyEnumerated;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import io.smallrye.mutiny.Uni;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.experimental.Accessors;
 
 @Entity
 @Table(name = "nutrition_plans")
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Accessors(chain = true)
 public class NutritionPlan extends PanacheEntity {
 
     @OneToOne

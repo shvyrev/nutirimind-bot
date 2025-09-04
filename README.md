@@ -68,3 +68,57 @@ If you want to learn more about building native executables, please consult <htt
 Easily start your RESTful Web Services
 
 [Related guide section...](https://quarkus.io/guides/getting-started#the-jax-rs-resources)
+
+## Telegram Bot Setup
+
+### Prerequisites
+1. Create a bot using [BotFather](https://t.me/BotFather) on Telegram
+2. Get your bot token (format: `1234567890:ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghi`)
+3. Set environment variables:
+
+```bash
+export TELEGRAM_BOT_TOKEN=your_bot_token_here
+export TELEGRAM_BOT_USERNAME=your_bot_username
+```
+
+### Local Development with Webhook
+
+For local development, you need to expose your local server to the internet:
+
+#### Option 1: Using ngrok (Recommended)
+1. Install ngrok: `brew install ngrok` (macOS) or download from [ngrok.com](https://ngrok.com/)
+2. Run ngrok: `ngrok http 8443`
+3. Copy the HTTPS URL (e.g., `https://abc123.ngrok.io`)
+4. Set webhook URL:
+```bash
+export TELEGRAM_WEBHOOK_URL=https://abc123.ngrok.io/webhook
+export TELEGRAM_WEBHOOK_ENABLED=true
+```
+
+#### Option 2: Using VSCode Port Forwarding
+1. Run the application: `./mvnw quarkus:dev`
+2. In VSCode, open Command Palette (Cmd+Shift+P)
+3. Search for "Ports: Forward Port"
+4. Select port 8443 and choose public URL
+5. Set the obtained URL as webhook:
+```bash
+export TELEGRAM_WEBHOOK_URL=https://your-vscode-url.com/webhook
+export TELEGRAM_WEBHOOK_ENABLED=true
+```
+
+### Testing the Bot
+1. Start the application: `./mvnw quarkus:dev`
+2. Send `/start` command to your bot in Telegram
+3. Check application logs for incoming messages
+
+### Environment Variables
+- `TELEGRAM_BOT_TOKEN` - Your bot token from BotFather
+- `TELEGRAM_BOT_USERNAME` - Your bot username (without @)
+- `TELEGRAM_WEBHOOK_URL` - Public URL for webhook (required for production)
+- `TELEGRAM_WEBHOOK_ENABLED` - Set to `true` to enable webhook auto-configuration
+
+### Troubleshooting
+- Check logs for webhook setup messages
+- Verify that your public URL is accessible
+- Ensure bot token is correct
+- For local development, webhook requires HTTPS (use ngrok or similar tunnel)

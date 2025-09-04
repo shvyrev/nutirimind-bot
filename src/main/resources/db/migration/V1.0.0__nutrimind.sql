@@ -9,6 +9,8 @@
 
     create sequence nutrition_plans_SEQ start with 1 increment by 50;
 
+    create sequence onboarding_states_SEQ start with 1 increment by 50;
+
     create sequence psychological_tips_SEQ start with 1 increment by 50;
 
     create sequence user_achievements_SEQ start with 1 increment by 50;
@@ -102,6 +104,15 @@
         primary key (id)
     );
 
+    create table onboarding_states (
+        id bigint not null,
+        answers jsonb,
+        completed boolean not null,
+        current_step integer not null,
+        user_id bigint not null unique,
+        primary key (id)
+    );
+
     create table psychological_tips (
         id bigint not null,
         content varchar(255),
@@ -146,10 +157,10 @@
         activity_level varchar(255) check (activity_level in ('SEDENTARY','LIGHTLY_ACTIVE','MODERATELY_ACTIVE','VERY_ACTIVE','EXTREMELY_ACTIVE')),
         age integer,
         eats_out_frequency boolean,
-        gender varchar(255),
+        gender varchar(255) check (gender in ('MALE','FEMALE','OTHER')),
+        health_goal varchar(255) check (health_goal in ('WEIGHT_LOSS','MUSCLE_GAIN','MAINTENANCE','HEALTH_IMPROVEMENT')),
         height float(53),
         meals_per_day integer,
-        primary_goal varchar(255) check (primary_goal in ('WEIGHT_LOSS','MUSCLE_GAIN','MAINTENANCE','HEALTH_IMPROVEMENT')),
         weight float(53),
         user_id bigint not null unique,
         primary key (id)
@@ -169,7 +180,7 @@
         first_name varchar(255),
         last_active_at timestamp(6),
         last_name varchar(255),
-        state varchar(255) check (state in ('ONBOARDING','ACTIVE','PAUSED','CHURNED')),
+        state varchar(255) check (state in ('ONBOARDING','AWAITING_ANSWER','ACTIVE','PAUSED','CHURNED')),
         telegram_id bigint not null unique,
         username varchar(255),
         primary key (id)
@@ -212,6 +223,11 @@
 
     alter table if exists nutrition_plans 
        add constraint FKp24rwm221u5myvof88q7ybmtm 
+       foreign key (user_id) 
+       references users;
+
+    alter table if exists onboarding_states 
+       add constraint FK8a409ol095r4e2upik4u5opgg 
        foreign key (user_id) 
        references users;
 

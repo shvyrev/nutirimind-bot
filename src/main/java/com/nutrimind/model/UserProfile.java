@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.nutrimind.model.enums.ActivityLevel;
+import com.nutrimind.model.enums.Gender;
 import com.nutrimind.model.enums.HealthGoal;
 
 import io.quarkus.hibernate.reactive.panache.PanacheEntity;
@@ -22,9 +23,21 @@ import jakarta.persistence.MapKeyEnumerated;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import io.smallrye.mutiny.Uni;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.experimental.Accessors;
 
 @Entity
 @Table(name = "user_profiles")
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Accessors(chain = true)
 public class UserProfile extends PanacheEntity {
 
     @OneToOne
@@ -40,16 +53,17 @@ public class UserProfile extends PanacheEntity {
     @Column(name = "weight")
     public Double weight;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "gender")
-    public String gender;
+    public Gender gender;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "activity_level")
     public ActivityLevel activityLevel;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "primary_goal")
-    public HealthGoal primaryGoal;
+    @Column(name = "health_goal")
+    public HealthGoal healthGoal;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_dietary_restrictions", joinColumns = @JoinColumn(name = "profile_id"))
