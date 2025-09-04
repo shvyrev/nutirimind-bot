@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import io.smallrye.mutiny.Uni;
 
 @Entity
 @Table(name = "psychological_tips")

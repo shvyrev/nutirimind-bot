@@ -8,6 +8,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import io.smallrye.mutiny.Uni;
 
 @Entity
 @Table(name = "user_goals")
