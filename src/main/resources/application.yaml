@@ -13,7 +13,7 @@ quarkus:
 
 telegram:
   webhook:
-    url: ${TELEGRAM_WEBHOOK_URL:https://5276f5c34c1b.ngrok-free.app}
+    url: https://c1d8354beb37.ngrok-free.app
     enabled: ${TELEGRAM_WEBHOOK_ENABLED:true}
   datasource:
     db-kind: postgresql

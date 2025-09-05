@@ -9,6 +9,7 @@ import com.nutrimind.model.enums.HealthGoal;
 import com.nutrimind.model.enums.OnboardingStepType;
 import com.nutrimind.model.enums.UserState;
 import com.nutrimind.service.NutritionCalculator.NutritionPlan;
+import com.nutrimind.service.handlers.ChatMessageHandler;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -23,7 +24,8 @@ import java.util.Map;
 @Slf4j
 @ApplicationScoped
 @RequiredArgsConstructor
-public class OnboardingService {
+public class OnboardingService implements ChatMessageHandler {
+
     private static final List<OnboardingStep> ONBOARDING_STEPS = List.of(
         new OnboardingStep(1, OnboardingStepType.WELCOME, "Добро пожаловать в NutriMind! Давай настроим твой персональный план питания."),
         new OnboardingStep(2, OnboardingStepType.PERSONAL_INFO, "Расскажи, пожалуйста, твой возраст, рост и вес? (формат: возраст рост вес, например: 30 175 70)"),
@@ -47,6 +49,12 @@ public class OnboardingService {
 
     @Inject
     NutritionCalculator nutritionCalculator;
+
+    @Override
+    public Uni<Void> onMessage(ChatMessage message) {
+        log.info("Received message: {}", message);
+        return Uni.createFrom().voidItem();
+    }
 
     public Uni<User> startOnboarding(User user) {
         return stateManager.transitionToState(user, UserState.ONBOARDING)
@@ -175,18 +183,18 @@ public class OnboardingService {
         return Uni.createFrom().item(() -> {
             UserProfile profile = new UserProfile();
             profile.setUser(state.user);
-            
+
             // Parse personal info
             String personalInfo = (String) state.answers.get(OnboardingStepType.PERSONAL_INFO.name());
             String[] parts = personalInfo.split(" ");
             profile.setAge(Integer.parseInt(parts[0]));
             profile.setHeight(Double.parseDouble(parts[1]));
             profile.setWeight(Double.parseDouble(parts[2]));
-            
+
             // Parse other answers
             profile.setHealthGoal(parseHealthGoal((String) state.answers.get(OnboardingStepType.HEALTH_GOAL.name())));
             profile.setActivityLevel(parseActivityLevel((String) state.answers.get(OnboardingStepType.ACTIVITY_LEVEL.name())));
-            
+
             // TODO: Parse other fields from answers
             return profile;
         }).chain(profile -> profile.persistAndFlush());

@@ -90,7 +90,7 @@ public class User extends PanacheEntity {
                         .persist());
     }
 
-    public static Uni<User> byUpdate(Update v) {
+    public static Uni<User> byTelegramUpdate(Update v) {
         Long chatId = v.message().chat().id();
         return byTelegramId(chatId);
     }

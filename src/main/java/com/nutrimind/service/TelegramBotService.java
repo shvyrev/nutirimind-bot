@@ -19,22 +19,31 @@ import static java.util.function.Predicate.not;
 public class TelegramBotService {
     private final TelegramBot bot;
 
-    private final OnboardingService onboardingService;
+    private final OnboardingService onboarding;
 
     public Uni<Void> handleUpdate(Update update) {
         return ofNullable(update)
                 .filter(not(v -> v.message() == null))
-                .map(v -> User.byUpdate(v)
+                .map(v -> User.byTelegramUpdate(v)
                         .map(u -> ChatMessageHandler.ChatMessage.of(v, u))
-                        .chain(this::handleMessage))
+                        .chain(this::handleChatMessage))
                 .orElseGet(() -> Uni.createFrom().voidItem());
     }
 
-    private Uni<Void> handleMessage(ChatMessageHandler.ChatMessage message) {
+    private Uni<Void> handleChatMessage(ChatMessageHandler.ChatMessage message) {
         return switch (message.user().getState()) {
             case ACTIVE, PAUSED, CHURNED -> handleDefaultCommands(message);
-            case ONBOARDING, AWAITING_ANSWER -> handleOnboardingMessage(message);
+            case ONBOARDING, AWAITING_ANSWER -> onboarding.onMessage(message);
         };
+    }
+
+    private Uni<Void> handleOnboardingMessage(ChatMessageHandler.ChatMessage message) {
+        return onboarding.processAnswer(message.user(), message.text())
+                .onFailure().recoverWithUni(failure -> {
+                    return sendMessage(message.user().getTelegramId(), "Не могу понять ответ. Пожалуйста, попробуйте еще раз.")
+                            .chain(() -> Uni.createFrom().failure(failure));
+                })
+                .chain(() -> Uni.createFrom().voidItem());
     }
 
     private Uni<Void> handleDefaultCommands(ChatMessageHandler.ChatMessage message) {
@@ -45,17 +54,8 @@ public class TelegramBotService {
         };
     }
 
-    private Uni<Void> handleOnboardingMessage(ChatMessageHandler.ChatMessage message) {
-        return onboardingService.processAnswer(message.user(), message.text())
-                .onFailure().recoverWithUni(failure -> {
-                    return sendMessage(message.user().getTelegramId(), "Не могу понять ответ. Пожалуйста, попробуйте еще раз.")
-                            .chain(() -> Uni.createFrom().failure(failure));
-                })
-                .chain(() -> Uni.createFrom().voidItem());
-    }
-
     private Uni<Void> startOnboarding(User user) {
-        return onboardingService.startOnboarding(user)
+        return onboarding.startOnboarding(user)
                 .chain(updatedUser -> sendMessage(updatedUser.getTelegramId(), "Начинаем онбординг! Ответьте на несколько вопросов для создания вашего плана питания."));
     }
 

@@ -2,6 +2,7 @@ package com.nutrimind.service.handlers;
 
 import com.nutrimind.model.User;
 import com.pengrad.telegrambot.model.Update;
+import io.smallrye.mutiny.Uni;
 
 public interface ChatMessageHandler  {
 
@@ -10,4 +11,6 @@ public interface ChatMessageHandler  {
             return new ChatMessage(update.message().chat().id(), update.message().text(), user);
         }
     }
+
+    Uni<Void> onMessage(ChatMessage message);
 }
