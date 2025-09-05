@@ -2,6 +2,7 @@ package com.nutrimind;
 
 import com.nutrimind.service.TelegramBotService;
 import com.pengrad.telegrambot.utility.BotUtils;
+import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
@@ -22,6 +23,7 @@ public class TelegramWebhookResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @WithSession
     public Uni<Void> handleUpdate(String rawJson) {
         return ofNullable(rawJson)
                 .filter(not(s -> s.trim().isEmpty()))

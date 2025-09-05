@@ -3,6 +3,8 @@ package com.nutrimind.model;
 import io.quarkus.hibernate.reactive.panache.PanacheEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -10,6 +12,7 @@ import io.smallrye.mutiny.Uni;
 import java.util.Map;
 import jakarta.persistence.Convert;
 import com.nutrimind.model.converter.JsonConverter;
+import com.nutrimind.model.enums.OnboardingStepType;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -31,8 +34,9 @@ public class OnboardingState extends PanacheEntity {
     @JoinColumn(name = "user_id", nullable = false)
     public User user;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "current_step", nullable = false)
-    public Integer currentStep = 0;
+    public OnboardingStepType currentStep = OnboardingStepType.WELCOME;
 
     @Column(name = "answers", columnDefinition = "jsonb")
     @Convert(converter = JsonConverter.class)
@@ -47,7 +51,7 @@ public class OnboardingState extends PanacheEntity {
     }
 
     // Reactive save method
-    public Uni<OnboardingState> persistAndFlush() {
-        return persistAndFlush();
+    public Uni<OnboardingState> store() {
+        return persist().chain(this::flush).onItem().transform(voidValue -> this);
     }
 }

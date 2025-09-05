@@ -69,4 +69,19 @@ public class AnswerValidator {
             lowerAnswer.contains("приятель")
         );
     }
+
+    public Uni<Boolean> validateDietPreferences(String answer) {
+        // Basic validation: answer should be between 2 and 500 characters
+        return Uni.createFrom().item(answer.length() >= 2 && answer.length() <= 500);
+    }
+
+    public Uni<Boolean> validateRestrictions(String answer) {
+        // Basic validation: answer should be between 2 and 500 characters
+        return Uni.createFrom().item(answer.length() >= 2 && answer.length() <= 500);
+    }
+
+    public Uni<Boolean> validateEatingHabits(String answer) {
+        // Basic validation: answer should be between 2 and 500 characters
+        return Uni.createFrom().item(answer.length() >= 2 && answer.length() <= 500);
+    }
 }

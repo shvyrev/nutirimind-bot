@@ -44,7 +44,7 @@ public class UserAchievement extends PanacheEntity {
     }
 
     // Reactive save method
-    public Uni<UserAchievement> persistAndFlush() {
-        return persistAndFlush().onItem().transform(entity -> (UserAchievement) entity);
+    public Uni<UserAchievement> store() {
+        return persist().chain(() -> flush()).onItem().transform(voidValue -> this);
     }
 }

@@ -6,7 +6,9 @@ import java.util.List;
 import com.nutrimind.model.enums.UserState;
 import com.nutrimind.model.enums.CommunicationStyle;
 
+import com.pengrad.telegrambot.model.Update;
 import io.quarkus.hibernate.reactive.panache.PanacheEntity;
+import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -77,6 +79,20 @@ public class User extends PanacheEntity {
 
     public static Uni<User> findByUsername(String username) {
         return find("username", username).firstResult();
+    }
+
+    @WithTransaction
+    public static Uni<User> byTelegramId(Long telegramId) {
+        return findByTelegramId(telegramId)
+                .onItem().ifNull().switchTo(() -> new User()
+                        .setTelegramId(telegramId)
+                        .setState(UserState.ONBOARDING)
+                        .persist());
+    }
+
+    public static Uni<User> byUpdate(Update v) {
+        Long chatId = v.message().chat().id();
+        return byTelegramId(chatId);
     }
 
     // Reactive save method

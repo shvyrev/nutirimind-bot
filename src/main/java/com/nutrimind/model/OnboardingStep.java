@@ -1,3 +1,5 @@
 package com.nutrimind.model;
 
-public record OnboardingStep(int stepNumber, String type, String question) {}
+import com.nutrimind.model.enums.OnboardingStepType;
+
+public record OnboardingStep(int stepNumber, OnboardingStepType type, String question) {}
